@@ -28,6 +28,8 @@ static struct rpmBuildArguments_s rpmBTArgs;
 #define	POPT_RMSPEC		-1019
 #define POPT_NODIRTOKENS	-1020
 #define POPT_BUILDINPLACE	-1021
+#define PORT_ISOFTAPP   -1022
+#define PORT_OS -1023
 
 #define	POPT_REBUILD		0x4262 /* Bb */
 #define	POPT_RECOMPILE		0x4369 /* Ci */
@@ -63,6 +65,8 @@ static char buildChar = 0;		/*!< Build stage (one of "abcilps ") */
 static rpmBuildFlags nobuildAmount = 0;	/*!< Build stage disablers */
 static ARGV_t build_targets = NULL;	/*!< Target platform(s) */
 static int buildInPlace = 0;		/*!< from --build-in-place */
+static int isoftApp = 0;    /*!< Build for iSOFT App */
+static int os = 0;  /*!< Build for osdb */
 
 static void buildArgCallback( poptContext con,
 	enum poptCallbackReason reason,
@@ -128,6 +132,14 @@ static void buildArgCallback( poptContext con,
 	rpmDefineMacro(NULL, "_build_in_place 1", 0);
 	buildInPlace = 1;
 	break;
+
+    case PORT_ISOFTAPP:
+    isoftApp = 1;
+    break;
+
+    case PORT_OS:
+    os = 1;
+    break;
     }
 }
 
@@ -243,6 +255,13 @@ static struct poptOption rpmBuildPoptTable[] = {
 	N_("skip straight to specified stage (only for c,i)"), NULL },
  { "target", '\0', POPT_ARG_STRING, 0,  POPT_TARGETPLATFORM,
 	N_("override target platform"), "CPU-VENDOR-OS" },
+
+ { "isoftapp", '\0', 0, 0, PORT_ISOFTAPP,
+    N_("build for iSOFT App"), NULL },
+
+ { "os", '\0', 0, 0, PORT_OS,
+    N_("build for osdb"), NULL },
+
    POPT_TABLEEND
 };
 
@@ -276,7 +295,9 @@ static struct poptOption optionsTable[] = {
 static int checkSpec(rpmts ts, rpmSpec spec)
 {
     int rc;
-    rpmps ps = rpmSpecCheckDeps(ts, spec);
+    rpmps ps = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+        rpmSpecCheckDepsISoftApp(ts, spec) : 
+        rpmSpecCheckDeps(ts, spec);
 
     if (ps) {
 	rpmlog(RPMLOG_ERR, _("Failed build dependencies:\n"));

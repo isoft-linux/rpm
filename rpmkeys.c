@@ -18,6 +18,8 @@ enum modes {
 
 static int mode = 0;
 static int test = 0;
+static int isoftApp = 0;
+static int os = 0;
 
 static struct poptOption keyOptsTable[] = {
     { "checksig", 'K', (POPT_ARG_VAL|POPT_ARGFLAG_OR), &mode, MODE_CHECKSIG,
@@ -40,6 +42,12 @@ static struct poptOption optionsTable[] = {
 	N_("Keyring options:"), NULL },
     { NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
 	N_("Common options for all rpm modes and executables:"), NULL },
+
+    { "isoftapp", '\0', POPT_ARGFLAG_OR, &isoftApp, 0, 
+      N_("Operate iSOFT App"), NULL },
+
+    { "os", '\0', POPT_ARGFLAG_OR, &os, 0,
+      N_("Operate osdb"), NULL },
 
     POPT_AUTOALIAS
     POPT_AUTOHELP
@@ -71,12 +79,16 @@ int main(int argc, char *argv[])
 
     switch (mode) {
     case MODE_CHECKSIG:
-	ec = rpmcliVerifySignatures(ts, args);
+	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+         rpmcliVerifySignaturesISoftApp(ts, args) : 
+         rpmcliVerifySignatures(ts, args);
 	break;
     case MODE_IMPORTKEY:
 	if (test)
 	    rpmtsSetFlags(ts, (rpmtsFlags(ts)|RPMTRANS_FLAG_TEST));
-	ec = rpmcliImportPubkeys(ts, args);
+	ec = isoftApp | rpmExpandNumeric("%{_isoftapp}") && !os ?
+         rpmcliImportPubkeysISoftApp(ts, args) : 
+         rpmcliImportPubkeys(ts, args);
 	break;
     /* XXX TODO: actually implement these... */
     case MODE_DELKEY:

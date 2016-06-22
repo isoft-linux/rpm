@@ -1,23 +1,20 @@
-This is RPM, the RPM Package Manager.
+# RPM Next
 
-The latest releases are always available at:
+One day [Cjacker](https://github.com/cjacker) had an idea: there are OS layer 
+(/var/lib/rpm) and AppStore layer (/var/lib/appstore) physical isolated. 
+so rpm -ivh/-e only install/erase Apps into/from AppStore layer, OS is totally 
+READ-ONLY. when installing Apps, check dependency in OS layer at first, if 
+unsatisfied depend, then switch to AppStore layer for checking dependency again, 
+if still unsatisfied depend, add dependency problem, otherwise installed Apps 
+successfully.
 
-	http://rpm.org/releases/
+![RPM isolatation design](https://raw.github.com/isoft-linux/rpm/isoftapp/doc/rpm-isolatation-design.png)
 
-Additional RPM documentation (papers, slides, HOWTOs) can also be
-found at the same site: http://rpm.org.
+## Goal
 
-http://rpm.org/wiki/Communicate lists all rpm releated mailing lists.
-
-RPM was originally written by:
-
-    Erik Troan <ewt@redhat.com>
-    Marc Ewing <marc@redhat.com>
-
-See the CREDITS file for a list of folks who have helped us out
-tremendously.  RPM is Copyright (c) 1998 by Red Hat Software, Inc.,
-and may be distributed under the terms of the GPL and LGPL (see  the
-file COPYING for details).
+* keep rpm original command unbroken;
+* keep librpm original API unbroken;
+* just like Mac ***make install*** is still able to pollute OS layer;
 
 ## Build
 
@@ -38,17 +35,17 @@ export CFLAGS="$RPM_OPT_FLAGS -DLUA_COMPAT_APIINTCASTS"
     --with-cap  \
     --enable-plugins    \
     --enable-python \
-    --with-vendor=isoft \
+    --with-vendor=aosc \
     --enable-debug=yes
 ```
 
-## Db
+## isoftapp db
 
 ```
 rpm --initdb --dbpath /var/lib/isoft-app
 ```
 
-## RPM Next
+## RPM Next command
 
 1.
 

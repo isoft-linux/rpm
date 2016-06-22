@@ -233,6 +233,15 @@ int showQueryPackage(QVA_t qva, rpmts ts, Header h);
 int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv);
 
 /** \ingroup rpmcli
+ * Iterate over query/verify arg list for iSOFT App.
+ * @param ts		transaction set
+ * @param qva		parsed query/verify options
+ * @param argv		query argument(s) (or NULL)
+ * @return		0 on success, else no. of failures
+ */
+int rpmcliArgIterISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
+
+/** \ingroup rpmcli
  * Display package information.
  * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
  * @param ts		transaction set
@@ -241,6 +250,16 @@ int rpmcliArgIter(rpmts ts, QVA_t qva, ARGV_const_t argv);
  * @return		0 on success, else no. of failures
  */
 int rpmcliQuery(rpmts ts, QVA_t qva, ARGV_const_t argv);
+
+/** \ingroup rpmcli
+ * Display package information.
+ * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
+ * @param ts		transaction set
+ * @param qva		parsed query/verify options
+ * @param argv		query argument(s) (or NULL)
+ * @return		0 on success, else no. of failures
+ */
+int rpmcliQueryISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
 
 /** \ingroup rpmcli
  * Display results of package verify.
@@ -270,6 +289,16 @@ int rpmVerifySignatures(QVA_t qva, rpmts ts, FD_t fd, const char * fn);
  * @return		0 on success, else no. of failures
  */
 int rpmcliVerify(rpmts ts, QVA_t qva, ARGV_const_t argv);
+
+/** \ingroup rpmcli
+ * Verify iSOFT App install.
+ * @todo hack: RPMQV_ALL can pass char ** arglist = NULL, not char * arg. Union?
+ * @param ts		transaction set
+ * @param qva		parsed query/verify options
+ * @param argv		verify argument(s) (or NULL)
+ * @return		0 on success, else no. of failures
+ */
+int rpmcliVerifyISoftApp(rpmts ts, QVA_t qva, ARGV_const_t argv);
 
 /* ==================================================================== */
 /** \name RPMEIU */
@@ -362,6 +391,22 @@ struct rpmInstallArguments_s {
 int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
 
 /** \ingroup rpmcli
+ * Install/upgrade/freshen/reinstall binary rpm package.
+ * @param ts		transaction set
+ * @param ia		mode flags and parameters
+ * @param fileArgv	array of package file names (NULL terminated)
+ * @param probPtr     problem string reference
+ * @return		0 on success
+ *
+ * @todo		fileArgv is modified on errors, should be ARGV_const_t
+ */
+int rpmInstallISoftApp(rpmts ts, 
+                       struct rpmInstallArguments_s * ia, 
+                       ARGV_t fileArgv, 
+                       void *probPtr);
+
+
+/** \ingroup rpmcli
  * Erase binary rpm package.
  * @param ts		transaction set
  * @param ia		control args/bits
@@ -370,6 +415,16 @@ int rpmInstall(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_t fileArgv);
  */
 
 int rpmErase(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv);
+
+/** \ingroup rpmcli
+ * Erase binary rpm package.
+ * @param ts		transaction set
+ * @param ia		control args/bits
+ * @param argv		array of package file names (NULL terminated)
+ * @return		0 on success
+ */
+
+int rpmEraseISoftApp(rpmts ts, struct rpmInstallArguments_s * ia, ARGV_const_t argv);
 
 /** \ingroup rpmcli
  */
@@ -389,6 +444,16 @@ extern struct poptOption rpmInstallPoptTable[];
  */
 int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
 
+/* ==================================================================== */
+/** \name RPMK */
+
+/** Import public key(s) to iSOFT App keyring
+ * @param ts		transaction set
+ * @param argv		array of pubkey path arguments (NULL terminated)
+ * @return		0 on success
+ */
+int rpmcliImportPubkeysISoftApp(rpmts ts, ARGV_const_t argv);
+
 /** \ingroup rpmcli
  * Verify package signatures
  * @param ts		transaction set
@@ -396,6 +461,19 @@ int rpmcliImportPubkeys(rpmts ts, ARGV_const_t argv);
  * @return		0 on success
  */
 int rpmcliVerifySignatures(rpmts ts, ARGV_const_t argv);
+
+/** \ingroup rpmcli
+ * Verify iSOFT App signatures
+ * @param ts		transaction set
+ * @param argv		array of package path arguments (NULL terminated)
+ * @return		0 on success
+ */
+int rpmcliVerifySignaturesISoftApp(rpmts ts, ARGV_const_t argv);
+
+/** \ingroup rpmcli
+ * Initialize filter iterator for isoftapp
+ */
+rpmdbMatchIterator initFilterIteratorISoftApp(rpmts ts, ARGV_const_t argv);
 
 #ifdef __cplusplus
 }

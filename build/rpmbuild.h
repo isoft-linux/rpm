@@ -94,6 +94,14 @@ Header rpmSpecSourceHeader(rpmSpec spec);
 rpmps rpmSpecCheckDeps(rpmts ts, rpmSpec spec);
 
 /** \ingroup rpmbuild
+ * Verify build depencies of a spec against.
+ * @param ts		(empty) transaction set
+ * @param spec		parsed spec control structure
+ * @return		rpm problem set or NULL on no problems
+ */
+rpmps rpmSpecCheckDepsISoftApp(rpmts ts, rpmSpec spec);
+
+/** \ingroup rpmbuild
  * Retrieve build dependency set from spec.
  * @param spec		parsed spec control structure
  * @param tag		dependency tag
